@@ -1,0 +1,62 @@
+﻿@page "/joke"
+@inject HttpClient Http
+@using System.Text.Json
+<PageTitle>Joke</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">生成笑话</MudText>
+
+<MudButton OnClick="@GenerateJoke" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Refresh"
+           Color="Color.Primary">生成
+</MudButton>
+
+@if (_joke != null)
+{
+    <MudCard Class="mt-4">
+        <MudCardContent>
+            <MudText Typo="Typo.body1" Class="mt-2">@_joke.Value</MudText>
+            <MudText Typo="Typo.overline" Class="mt-2 d-flex justify-end">
+                <MudLink Href="@_joke.Url" Target="_blank">View Original Joke</MudLink>
+            </MudText>
+        </MudCardContent>
+    </MudCard>
+}
+else if (_loading)
+{
+    <div class="mt-4">
+        <MudProgressCircular Indeterminate="true"/>
+    </div>
+}
+else if (!string.IsNullOrEmpty(_error))
+{
+    <MudAlert Severity="Severity.Error" Class="mt-4">@_error</MudAlert>
+}
+
+@code {
+    private JokeItem? _joke;
+    private bool _loading;
+    private string? _error;
+
+    private async Task GenerateJoke()
+    {
+        _loading = true;
+        _error = null;
+        try
+        {
+            _joke = await Http.GetFromJsonAsync<JokeItem>("api/joke", new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        catch (Exception ex)
+        {
+            _error = $"Failed to load joke: {ex.Message}";
+        }
+        finally
+        {
+            _loading = false;
+            StateHasChanged();
+        }
+    }
+
+}
