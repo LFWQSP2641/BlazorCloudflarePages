@@ -1,0 +1,57 @@
+﻿@page "/base64encoder"
+@inject ISnackbar SnackbarService
+
+<PageTitle>Base64 Encoder</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Base64 编码器</MudText>
+
+<MudStack>
+    <MudTextField @bind-Value="_input" Label="Input" Lines="5"></MudTextField>
+    <MudStack>
+        <MudStack Row="true">
+            <MudText Class="align-self-center">字符编码：UTF-8</MudText>
+            <MudCheckBox @bind-Value="_isUrlSafe" Label="Url Safe"></MudCheckBox>
+        </MudStack>
+        <MudStack Row="true">
+            <MudButton OnClick="@Encode" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Code" Color="Color.Primary">编码</MudButton>
+            <MudButton OnClick="@Clear" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error">清空</MudButton>
+            <MudButton OnClick="@Swap" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.SwapHoriz" Color="Color.Secondary">交换</MudButton>
+        </MudStack>
+    </MudStack>
+    <MudTextField @bind-Value="_result" Label="Base64 encoded string" Lines="5" ReadOnly="true"></MudTextField>
+</MudStack>
+
+@code {
+    private string _input = string.Empty;
+    private string _result = string.Empty;
+
+    private bool _isUrlSafe = false;
+
+    private void Encode()
+    {
+        if (_input.IsWhiteSpace())
+        {
+            SnackbarService.Add("请输入要编码的字符串", Severity.Warning);
+            return;
+        }
+        var bytes = System.Text.Encoding.UTF8.GetBytes(_input);
+        var base64 = Convert.ToBase64String(bytes);
+        if (_isUrlSafe)
+        {
+            base64 = base64.Replace('+', '-').Replace('/', '_').TrimEnd('=');
+        }
+        _result = base64;
+    }
+
+    private void Clear()
+    {
+        _input = string.Empty;
+        _result = string.Empty;
+    }
+    
+    private void Swap()
+    {
+        (_input, _result) = (_result, _input);
+    }
+
+}

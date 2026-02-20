@@ -1,0 +1,62 @@
+﻿@page "/base64decoder"
+@inject ISnackbar SnackbarService
+
+<PageTitle>Base64 Encoder</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Base64 解码器</MudText>
+
+<MudStack>
+    <MudTextField @bind-Value="_input" Label="Base64 encoded string" Lines="5"></MudTextField>
+    <MudStack>
+        <MudStack Row="true">
+            <MudText Class="align-self-center">字符编码：UTF-8</MudText>
+        </MudStack>
+        <MudStack Row="true">
+            <MudButton OnClick="@Decode" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Code" Color="Color.Primary">解码</MudButton>
+            <MudButton OnClick="@Clear" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error">清空</MudButton>
+            <MudButton OnClick="@Swap" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.SwapHoriz" Color="Color.Secondary">交换</MudButton>
+        </MudStack>
+    </MudStack>
+    <MudTextField @bind-Value="_result" Label="Result" Lines="5" ReadOnly="true"></MudTextField>
+</MudStack>
+
+@code {
+    private string _input = string.Empty;
+    private string _result = string.Empty;
+
+    private void Decode()
+    {
+        if (_input.IsWhiteSpace())
+        {
+            SnackbarService.Add("请输入要解码的字符串", Severity.Warning);
+            return;
+        }
+        try
+        {
+            // may use url safe base64
+            var base64 = _input.Replace('-', '+').Replace('_', '/');
+            while (base64.Length % 4 != 0)
+            {
+                base64 += '=';
+            }
+            var bytes = Convert.FromBase64String(base64);
+            _result = System.Text.Encoding.UTF8.GetString(bytes);
+        }
+        catch (FormatException)
+        {
+            SnackbarService.Add("无效的 Base64 字符串", Severity.Error);
+        }
+    }
+
+    private void Clear()
+    {
+        _input = string.Empty;
+        _result = string.Empty;
+    }
+    
+    private void Swap()
+    {
+        (_input, _result) = (_result, _input);
+    }
+
+}
