@@ -1,0 +1,288 @@
+﻿@page "/myip"
+@using System.Text.Json
+@inject HttpClient Http
+
+<PageTitle>本机 IP 查询</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">本机 IP 查询</MudText>
+
+<MudDivider Class="my-4"/>
+
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="6">
+        <MudStack>
+            <MudStack>
+                @if (_ipsbIpv4 != null)
+                {
+                    <MudText Typo="Typo.caption" Color="Color.Info">IPv4</MudText>
+                    <MudText Typo="Typo.body1" Color="Color.Primary">@_ipsbIpv4.Ip</MudText>
+                    <MudText Typo="Typo.caption" Color="Color.Info">Location</MudText>
+                    <MudText Typo="Typo.body1" Color="Color.Primary">@_ipsbIpv4.Location</MudText>
+                    <MudText Typo="Typo.caption" Color="Color.Info">ISP</MudText>
+                    <MudText Typo="Typo.body1" Color="Color.Primary">@_ipsbIpv4.Isp</MudText>
+                    <MudText Typo="Typo.caption" Color="Color.Info">ASN</MudText>
+                    <MudText Typo="Typo.body1" Color="Color.Primary">@_ipsbIpv4.AsnInfo</MudText>
+                }
+                else if (!string.IsNullOrEmpty(_ipsbIpv4Error))
+                {
+                    <MudAlert Severity="Severity.Error">@_ipsbIpv4Error</MudAlert>
+                }
+                else
+                {
+                    <MudText Typo="Typo.caption" Color="Color.Info">IPv4</MudText>
+                    <MudSkeleton Width="60%" Height="20px" Class="mb-1"/>
+                    <MudText Typo="Typo.caption" Color="Color.Info">Location</MudText>
+                    <MudSkeleton Width="80%" Height="20px" Class="mb-1"/>
+                    <MudText Typo="Typo.caption" Color="Color.Info">ISP</MudText>
+                    <MudSkeleton Width="70%" Height="20px" Class="mb-1"/>
+                    <MudText Typo="Typo.caption" Color="Color.Info">ASN</MudText>
+                    <MudSkeleton Width="50%" Height="20px" Class="mb-1"/>
+                }
+            </MudStack>
+            <MudDivider Class="my-4"/>
+            <MudStack>
+                @if (_ipsbIpv6 != null)
+                {
+                    <MudText Typo="Typo.caption" Color="Color.Info">IPv6</MudText>
+                    <MudText Typo="Typo.body1" Color="Color.Primary">@_ipsbIpv6.Ip</MudText>
+                    <MudText Typo="Typo.caption" Color="Color.Info">Location</MudText>
+                    <MudText Typo="Typo.body1" Color="Color.Primary">@_ipsbIpv6.Location</MudText>
+                    <MudText Typo="Typo.caption" Color="Color.Info">ISP</MudText>
+                    <MudText Typo="Typo.body1" Color="Color.Primary">@_ipsbIpv6.Isp</MudText>
+                    <MudText Typo="Typo.caption" Color="Color.Info">ASN</MudText>
+                    <MudText Typo="Typo.body1" Color="Color.Primary">@_ipsbIpv6.AsnInfo</MudText>
+                }
+                else if (!string.IsNullOrEmpty(_ipsbIpv6Error))
+                {
+                    <MudAlert Severity="Severity.Error">@_ipsbIpv6Error</MudAlert>
+                }
+                else
+                {
+                    <MudText Typo="Typo.caption" Color="Color.Info">IPv6</MudText>
+                    <MudSkeleton Width="80%" Height="20px" Class="mb-1"/>
+                    <MudText Typo="Typo.caption" Color="Color.Info">Location</MudText>
+                    <MudSkeleton Width="70%" Height="20px" Class="mb-1"/>
+                    <MudText Typo="Typo.caption" Color="Color.Info">ISP</MudText>
+                    <MudSkeleton Width="65%" Height="20px" Class="mb-1"/>
+                    <MudText Typo="Typo.caption" Color="Color.Info">ASN</MudText>
+                    <MudSkeleton Width="50%" Height="20px" Class="mb-1"/>
+                }
+            </MudStack>
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudStack>
+            <MudStack>
+                <MudStack Row="true">
+                    <MudChip T="string" Color="Color.Info">国内</MudChip>
+                    <MudText Class="align-self-center">iP138.com</MudText>
+                </MudStack>
+                <MudStack Row="true">
+                    <MudText>IP:</MudText>
+                    @if (!string.IsNullOrEmpty(_ip138Ip))
+                    {
+                        <MudText Color="Color.Primary">@_ip138Ip</MudText>
+                    }
+                    else
+                    {
+                        <MudSkeleton Width="40%" Height="20px" Class="mb-1"/>
+                    }
+                </MudStack>
+            </MudStack>
+            <MudDivider Class="my-4"/>
+            <MudStack>
+                <MudStack Row="true">
+                    <MudChip T="string" Color="Color.Info">国内</MudChip>
+                    <MudText Class="align-self-center">IP.cn</MudText>
+                </MudStack>
+                <MudStack Row="true">
+                    <MudText>IP:</MudText>
+                    @if (!string.IsNullOrEmpty(_ipCnIp))
+                    {
+                        <MudText Color="Color.Primary">@_ipCnIp</MudText>
+                    }
+                    else
+                    {
+                        <MudSkeleton Width="40%" Height="20px" Class="mb-1"/>
+                    }
+                </MudStack>
+            </MudStack>
+            @*<MudDivider Class="my-4"/>
+            <MudStack>
+                <MudStack Row="true">
+                    <MudChip T="string" Color="Color.Info">国际</MudChip>
+                    <MudText Class="align-self-center">Cloudflare</MudText>
+                </MudStack>
+                <MudText>IP:</MudText>
+            </MudStack>
+            <MudDivider Class="my-4"/>
+            <MudStack>
+                <MudStack Row="true">
+                    <MudChip T="string" Color="Color.Info">国际</MudChip>
+                    <MudText Class="align-self-center">IPinfo.io</MudText>
+                </MudStack>
+                <MudText>IP:</MudText>
+            </MudStack>*@
+        </MudStack>
+    </MudItem>
+    @*<MudFlexBreak/>
+    <MudDivider Class="my-4"/>
+    <MudFlexBreak/>
+    <MudItem xs="12" md="12">
+        <MudText Style="word-break: break-word;">
+            PaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPadding
+        </MudText>
+    </MudItem>*@
+</MudGrid>
+
+@code {
+    private IpsbItem? _ipsbIpv4;
+    private string? _ipsbIpv4Error;
+    private IpsbItem? _ipsbIpv6;
+    private string? _ipsbIpv6Error;
+    
+    private string? _ip138Ip;
+    private string? _ipCnIp;
+    
+    /*private List<int?> _ugurlDelayList = new List<int?>(6);
+    private List<int?> _hdslbDelayList = new List<int?>(6);
+    private List<int?> _githubDelayList = new List<int?>(6);
+    private List<int?> _jsdelivrDelayList = new List<int?>(6);*/
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var tasks = new List<Task>
+        {
+            FetchIpsbIpv4Async(),
+            FetchIpsbIpv6Async(),
+            FetchIp138Async(),
+            FetchIpCnAsync()
+        };
+        await Task.WhenAll(tasks);
+    }
+    
+    private async Task FetchIp138Async()
+    {
+        _ip138Ip = null;
+        try
+        {
+            var response = await Http.GetAsync("https://2026.ip138.com/");
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"API请求失败: https://2026.ip138.com/ 返回状态码 {(int)response.StatusCode} ({response.StatusCode})");
+            }
+            var content = await response.Content.ReadAsStringAsync();
+            // <span>您的iP地址是：</span><span>[<a href="https://www.ip138.com/iplookup.php?ip=IPIPIPIP&amp;action=2" target="_blank">IPIPIPIP</a> <a href="https://www.ipshudi.com/" target="_blank"><img src="https://6.ipchaxun.net/IPIPIPIP.gif" border="0"/></a>] </span><span>来自：中国 XXXX</span>
+            var match = System.Text.RegularExpressions.Regex.Match(
+                content,
+                @"iplookup\.php\?ip=([\d\.a-fA-F:]+)&(?:amp;)?action=2"
+            );
+            _ip138Ip = match.Success ? match.Groups[1].Value : "未能解析IP地址";
+        }
+        catch (Exception ex)
+        {
+            _ip138Ip = $"加载IP失败: {ex.GetType().Name} - {ex.Message}";
+        }
+    }
+    
+    private async Task FetchIpCnAsync()
+    {
+        _ipCnIp = null;
+        try
+        {
+            var response = await Http.GetAsync("https://my.ip.cn/");
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"API请求失败: https://my.ip.cn/ 返回状态码 {(int)response.StatusCode} ({response.StatusCode})");
+            }
+            var content = await response.Content.ReadAsStringAsync();
+            // ip：IPIPIPIP 归属地：中国 XXXX
+            var match = System.Text.RegularExpressions.Regex.Match(
+                content,
+                @"ip[:：]\s*([\d\.a-fA-F:]+)\s"
+            );
+            _ipCnIp = match.Success ? match.Groups[1].Value : "未能解析IP地址";
+        }
+        catch (Exception ex)
+        {
+            _ipCnIp = $"加载IP失败: {ex.GetType().Name} - {ex.Message}";
+        }
+    }
+
+    private async Task FetchIpsbIpv4Async()
+    {
+        _ipsbIpv4 = null;
+        _ipsbIpv4Error = null;
+        try
+        {
+            _ipsbIpv4 = await FetchIpsbAsync("https://api-ipv4.ip.sb/geoip");
+        }
+        catch (Exception ex)
+        {
+            _ipsbIpv4Error = $"加载IP失败: {ex.GetType().Name} - {ex.Message}";
+        }
+    }
+    
+    private async Task FetchIpsbIpv6Async()
+    {
+        _ipsbIpv6 = null;
+        _ipsbIpv6Error = null;
+        try
+        {
+            _ipsbIpv6 = await FetchIpsbAsync("https://api-ipv6.ip.sb/geoip");
+        }
+        catch (Exception ex)
+        {
+            _ipsbIpv6Error = $"加载IP失败: {ex.GetType().Name} - {ex.Message}";
+        }
+    }
+    
+    private async Task<IpsbItem> FetchIpsbAsync(string url)
+    {
+        try
+        {
+            var response = await Http.GetAsync(url);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"API请求失败: {url} 返回状态码 {(int)response.StatusCode} ({response.StatusCode})");
+            }
+            var content = await response.Content.ReadAsStringAsync();
+            IpsbItem? item = null;
+            try
+            {
+                item = JsonSerializer.Deserialize<IpsbItem>(content, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+                    PropertyNameCaseInsensitive = true
+                });
+            }
+            catch
+            {
+                // Ignored
+            }
+            if (item == null || string.IsNullOrEmpty(item?.Ip))
+            {
+                throw new Exception($"API错误: {url} 返回的数据格式不正确，无法解析为 IpsbItem");
+            }
+            return item;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"加载IP失败: {ex.GetType().Name} - {ex.Message}");
+        }
+    }
+    
+    private class IpsbItem
+    {
+        public string? Isp { get; set; }
+        public string? Ip { get; set; }
+        public string? ContinentCode { get; set; }
+        public int? Asn { get; set; }
+        public string? AsnOrganization { get; set; }
+        public string? Country { get; set; }
+        public string? City { get; set; }
+        
+        public string Location => (City == Country && Country is not null || string.IsNullOrEmpty(City) ? Country : $"{City}, {Country}") ?? "未知";
+        public string AsnInfo => Asn > 0 ? $"{ContinentCode}{Asn} {AsnOrganization}" : "未知";
+    }
+}
