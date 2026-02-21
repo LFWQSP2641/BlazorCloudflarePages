@@ -4,4 +4,39 @@
 
 <MudText Typo="Typo.h1" GutterBottom="true">Hello, world!</MudText>
 
-<MudText Typo="Typo.body1">Welcome to your new app.</MudText>
+<MudText Typo="Typo.body1">Welcome to my new app.</MudText>
+
+<MudDivider Class="my-4" />
+
+<MudGrid>
+    <MudItem xs="12" sm="6" md="4">
+        <MudLink Href="/base64encoder" Style="text-decoration:none;">
+            <MudCard>
+                <MudCardContent>
+                    <MudText Typo="Typo.h6">Base64 编码器</MudText>
+                    <MudText Typo="Typo.body2" Class="mt-1">支持 Url Safe 变体</MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudLink>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudLink Href="/base64decoder" Style="text-decoration:none;">
+            <MudCard>
+                <MudCardContent>
+                    <MudText Typo="Typo.h6">Base64 解码器</MudText>
+                    <MudText Typo="Typo.body2" Class="mt-1">支持 Url Safe 变体</MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudLink>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudLink Href="/joke" Style="text-decoration:none;">
+            <MudCard>
+                <MudCardContent>
+                    <MudText Typo="Typo.h6">生成笑话</MudText>
+                    <MudText Typo="Typo.body2" Class="mt-1">Powered by chucknorris.io</MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudLink>
+    </MudItem>
+</MudGrid>

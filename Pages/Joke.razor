@@ -40,17 +40,42 @@ else if (!string.IsNullOrEmpty(_error))
     {
         _loading = true;
         _error = null;
+        _joke = null;
         try
         {
-            _joke = await Http.GetFromJsonAsync<JokeItem>("api/joke", new JsonSerializerOptions
+            var response = await Http.GetAsync("api/joke");
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                _error = $"API请求失败: /api/joke 返回状态码 {(int)response.StatusCode} ({response.StatusCode})";
+                return;
+            }
+            
+            var contentType = response.Content.Headers.ContentType?.MediaType;
+            if (contentType != "application/json")
+            {
+                _error = $"API错误: /api/joke 返回了非JSON格式的内容 ({contentType ?? "未知类型"})，API服务可能未启动";
+                return;
+            }
+            
+            var content = await response.Content.ReadAsStringAsync();
+            _joke = JsonSerializer.Deserialize<JokeItem>(content, new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
                 PropertyNameCaseInsensitive = true
             });
         }
+        catch (HttpRequestException ex)
+        {
+            _error = $"网络请求失败: /api/joke 无法连接 - {ex.Message}";
+        }
+        catch (JsonException ex)
+        {
+            _error = $"JSON解析失败: /api/joke 返回的数据格式不正确 - {ex.Message}";
+        }
         catch (Exception ex)
         {
-            _error = $"Failed to load joke: {ex.Message}";
+            _error = $"加载笑话失败: {ex.GetType().Name} - {ex.Message}";
         }
         finally
         {
