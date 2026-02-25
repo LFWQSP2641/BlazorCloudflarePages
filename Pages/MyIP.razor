@@ -26,6 +26,7 @@
                 else if (!string.IsNullOrEmpty(_ipsbIpv4Error))
                 {
                     <MudAlert Severity="Severity.Error">@_ipsbIpv4Error</MudAlert>
+                    <MudButton OnClick="@FetchIpsbIpv4Async" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Refresh" Color="Color.Error">重试</MudButton>
                 }
                 else
                 {
@@ -55,6 +56,7 @@
                 else if (!string.IsNullOrEmpty(_ipsbIpv6Error))
                 {
                     <MudAlert Severity="Severity.Error">@_ipsbIpv6Error</MudAlert>
+                    <MudButton OnClick="@FetchIpsbIpv6Async" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Refresh" Color="Color.Error">重试</MudButton>
                 }
                 else
                 {
@@ -149,16 +151,13 @@
     private List<int?> _githubDelayList = new List<int?>(6);
     private List<int?> _jsdelivrDelayList = new List<int?>(6);*/
     
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
-        var tasks = new List<Task>
-        {
-            FetchIpsbIpv4Async(),
-            FetchIpsbIpv6Async(),
-            FetchIp138Async(),
-            FetchIpCnAsync()
-        };
-        await Task.WhenAll(tasks);
+        _ = FetchIpsbIpv4Async();
+        _ = FetchIpsbIpv6Async();
+        _ = FetchIp138Async();
+        _ = FetchIpCnAsync();
+        return Task.CompletedTask;
     }
     
     private async Task FetchIp138Async()
@@ -183,6 +182,7 @@
         {
             _ip138Ip = $"加载IP失败: {ex.GetType().Name} - {ex.Message}";
         }
+        StateHasChanged();
     }
     
     private async Task FetchIpCnAsync()
@@ -207,6 +207,7 @@
         {
             _ipCnIp = $"加载IP失败: {ex.GetType().Name} - {ex.Message}";
         }
+        StateHasChanged();
     }
 
     private async Task FetchIpsbIpv4Async()
@@ -221,6 +222,7 @@
         {
             _ipsbIpv4Error = $"加载IP失败: {ex.GetType().Name} - {ex.Message}";
         }
+        StateHasChanged();
     }
     
     private async Task FetchIpsbIpv6Async()
@@ -235,6 +237,7 @@
         {
             _ipsbIpv6Error = $"加载IP失败: {ex.GetType().Name} - {ex.Message}";
         }
+        StateHasChanged();
     }
     
     private async Task<IpsbItem> FetchIpsbAsync(string url)
