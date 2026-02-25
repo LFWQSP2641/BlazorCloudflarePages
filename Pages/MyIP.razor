@@ -26,7 +26,9 @@
                 else if (!string.IsNullOrEmpty(_ipsbIpv4Error))
                 {
                     <MudAlert Severity="Severity.Error">@_ipsbIpv4Error</MudAlert>
-                    <MudButton OnClick="@FetchIpsbIpv4Async" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Refresh" Color="Color.Error">重试</MudButton>
+                    <MudButton OnClick="@FetchIpsbIpv4Async" Variant="Variant.Outlined"
+                               StartIcon="@Icons.Material.Filled.Refresh" Color="Color.Error">重试
+                    </MudButton>
                 }
                 else
                 {
@@ -56,7 +58,9 @@
                 else if (!string.IsNullOrEmpty(_ipsbIpv6Error))
                 {
                     <MudAlert Severity="Severity.Error">@_ipsbIpv6Error</MudAlert>
-                    <MudButton OnClick="@FetchIpsbIpv6Async" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Refresh" Color="Color.Error">重试</MudButton>
+                    <MudButton OnClick="@FetchIpsbIpv6Async" Variant="Variant.Outlined"
+                               StartIcon="@Icons.Material.Filled.Refresh" Color="Color.Error">重试
+                    </MudButton>
                 }
                 else
                 {
@@ -127,14 +131,87 @@
             </MudStack>*@
         </MudStack>
     </MudItem>
-    @*<MudFlexBreak/>
+    <MudFlexBreak/>
     <MudDivider Class="my-4"/>
     <MudFlexBreak/>
     <MudItem xs="12" md="12">
-        <MudText Style="word-break: break-word;">
-            PaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPaddingPadding
-        </MudText>
-    </MudItem>*@
+        <MudStack>
+            <MudStack Row="true" Wrap="Wrap.Wrap" Spacing="4">
+                <MudStack>
+                    <MudStack Row="true">
+                        <MudText Class="align-self-center">字节跳动</MudText>
+                        <MudChip T="string" Color="Color.Info">国内</MudChip>
+                    </MudStack>
+                    <MudStack Row="true" AlignItems="AlignItems.Center">
+                        @foreach (var delay in _ugurlDelayList)
+                        {
+                            <MudTooltip Text="@(delay.HasValue ? $"{delay} ms" : "未测量")">
+                                <MudIcon Icon="@Icons.Material.Filled.Circle"
+                                         Style="@($"color: {GetDelayColor(delay)}; font-size: 16px;")"/>
+                            </MudTooltip>
+                        }
+                        <MudIconButton Icon="@Icons.Material.Filled.PlayArrow"
+                                       OnClick="@MeasureUgurlLatencyAsync"
+                                       Size="Size.Small"/>
+                    </MudStack>
+                </MudStack>
+                <MudStack>
+                    <MudStack Row="true">
+                        <MudText Class="align-self-center">Bilibili</MudText>
+                        <MudChip T="string" Color="Color.Info">国内</MudChip>
+                    </MudStack>
+                    <MudStack Row="true" AlignItems="AlignItems.Center">
+                        @foreach (var delay in _hdslbDelayList)
+                        {
+                            <MudTooltip Text="@(delay.HasValue ? $"{delay} ms" : "未测量")">
+                                <MudIcon Icon="@Icons.Material.Filled.Circle"
+                                         Style="@($"color: {GetDelayColor(delay)}; font-size: 16px;")"/>
+                            </MudTooltip>
+                        }
+                        <MudIconButton Icon="@Icons.Material.Filled.PlayArrow"
+                                       OnClick="@MeasureHdslbLatencyAsync"
+                                       Size="Size.Small"/>
+                    </MudStack>
+                </MudStack>
+                <MudStack>
+                    <MudStack Row="true">
+                        <MudText Class="align-self-center">GitHub</MudText>
+                        <MudChip T="string" Color="Color.Info">国际</MudChip>
+                    </MudStack>
+                    <MudStack Row="true" AlignItems="AlignItems.Center">
+                        @foreach (var delay in _githubDelayList)
+                        {
+                            <MudTooltip Text="@(delay.HasValue ? $"{delay} ms" : "未测量")">
+                                <MudIcon Icon="@Icons.Material.Filled.Circle"
+                                         Style="@($"color: {GetDelayColor(delay)}; font-size: 16px;")"/>
+                            </MudTooltip>
+                        }
+                        <MudIconButton Icon="@Icons.Material.Filled.PlayArrow"
+                                       OnClick="@MeasureGithubLatencyAsync"
+                                       Size="Size.Small"/>
+                    </MudStack>
+                </MudStack>
+                <MudStack>
+                    <MudStack Row="true">
+                        <MudText Class="align-self-center">jsDelivr</MudText>
+                        <MudChip T="string" Color="Color.Info">国际</MudChip>
+                    </MudStack>
+                    <MudStack Row="true" AlignItems="AlignItems.Center">
+                        @foreach (var delay in _jsdelivrDelayList)
+                        {
+                            <MudTooltip Text="@(delay.HasValue ? $"{delay} ms" : "未测量")">
+                                <MudIcon Icon="@Icons.Material.Filled.Circle"
+                                         Style="@($"color: {GetDelayColor(delay)}; font-size: 16px;")"/>
+                            </MudTooltip>
+                        }
+                        <MudIconButton Icon="@Icons.Material.Filled.PlayArrow"
+                                       OnClick="@MeasureJsdelivrLatencyAsync"
+                                       Size="Size.Small"/>
+                    </MudStack>
+                </MudStack>
+            </MudStack>
+        </MudStack>
+    </MudItem>
 </MudGrid>
 
 @code {
@@ -142,24 +219,28 @@
     private string? _ipsbIpv4Error;
     private IpsbItem? _ipsbIpv6;
     private string? _ipsbIpv6Error;
-    
+
     private string? _ip138Ip;
     private string? _ipCnIp;
-    
-    /*private List<int?> _ugurlDelayList = new List<int?>(6);
-    private List<int?> _hdslbDelayList = new List<int?>(6);
-    private List<int?> _githubDelayList = new List<int?>(6);
-    private List<int?> _jsdelivrDelayList = new List<int?>(6);*/
-    
+
+    private int?[] _ugurlDelayList = new int?[6];
+    private int?[] _hdslbDelayList = new int?[6];
+    private int?[] _githubDelayList = new int?[6];
+    private int?[] _jsdelivrDelayList = new int?[6];
+
     protected override Task OnInitializedAsync()
     {
         _ = FetchIpsbIpv4Async();
         _ = FetchIpsbIpv6Async();
         _ = FetchIp138Async();
         _ = FetchIpCnAsync();
+        _ = MeasureUgurlLatencyAsync();
+        _ = MeasureHdslbLatencyAsync();
+        _ = MeasureGithubLatencyAsync();
+        _ = MeasureJsdelivrLatencyAsync();
         return Task.CompletedTask;
     }
-    
+
     private async Task FetchIp138Async()
     {
         _ip138Ip = null;
@@ -170,6 +251,7 @@
             {
                 throw new Exception($"API请求失败: https://2026.ip138.com/ 返回状态码 {(int)response.StatusCode} ({response.StatusCode})");
             }
+
             var content = await response.Content.ReadAsStringAsync();
             // <span>您的iP地址是：</span><span>[<a href="https://www.ip138.com/iplookup.php?ip=IPIPIPIP&amp;action=2" target="_blank">IPIPIPIP</a> <a href="https://www.ipshudi.com/" target="_blank"><img src="https://6.ipchaxun.net/IPIPIPIP.gif" border="0"/></a>] </span><span>来自：中国 XXXX</span>
             var match = System.Text.RegularExpressions.Regex.Match(
@@ -182,9 +264,10 @@
         {
             _ip138Ip = $"加载IP失败: {ex.GetType().Name} - {ex.Message}";
         }
+
         StateHasChanged();
     }
-    
+
     private async Task FetchIpCnAsync()
     {
         _ipCnIp = null;
@@ -195,6 +278,7 @@
             {
                 throw new Exception($"API请求失败: https://my.ip.cn/ 返回状态码 {(int)response.StatusCode} ({response.StatusCode})");
             }
+
             var content = await response.Content.ReadAsStringAsync();
             // ip：IPIPIPIP 归属地：中国 XXXX
             var match = System.Text.RegularExpressions.Regex.Match(
@@ -207,6 +291,7 @@
         {
             _ipCnIp = $"加载IP失败: {ex.GetType().Name} - {ex.Message}";
         }
+
         StateHasChanged();
     }
 
@@ -222,9 +307,10 @@
         {
             _ipsbIpv4Error = $"加载IP失败: {ex.GetType().Name} - {ex.Message}";
         }
+
         StateHasChanged();
     }
-    
+
     private async Task FetchIpsbIpv6Async()
     {
         _ipsbIpv6 = null;
@@ -237,9 +323,10 @@
         {
             _ipsbIpv6Error = $"加载IP失败: {ex.GetType().Name} - {ex.Message}";
         }
+
         StateHasChanged();
     }
-    
+
     private async Task<IpsbItem> FetchIpsbAsync(string url)
     {
         try
@@ -249,6 +336,7 @@
             {
                 throw new Exception($"API请求失败: {url} 返回状态码 {(int)response.StatusCode} ({response.StatusCode})");
             }
+
             var content = await response.Content.ReadAsStringAsync();
             IpsbItem? item = null;
             try
@@ -263,10 +351,12 @@
             {
                 // Ignored
             }
+
             if (item == null || string.IsNullOrEmpty(item?.Ip))
             {
                 throw new Exception($"API错误: {url} 返回的数据格式不正确，无法解析为 IpsbItem");
             }
+
             return item;
         }
         catch (Exception ex)
@@ -274,7 +364,7 @@
             throw new Exception($"加载IP失败: {ex.GetType().Name} - {ex.Message}");
         }
     }
-    
+
     private class IpsbItem
     {
         public string? Isp { get; set; }
@@ -284,8 +374,75 @@
         public string? AsnOrganization { get; set; }
         public string? Country { get; set; }
         public string? City { get; set; }
-        
+
         public string Location => (City == Country && Country is not null || string.IsNullOrEmpty(City) ? Country : $"{City}, {Country}") ?? "未知";
         public string AsnInfo => Asn > 0 ? $"{ContinentCode}{Asn} {AsnOrganization}" : "未知";
     }
+
+    private async Task MeasureUgurlLatencyAsync()
+    {
+        _ugurlDelayList = new int?[6];
+        for (var i = 0; i < 6; i++)
+        {
+            _ugurlDelayList[i] = await MeasureLatencyAsync("https://lf3-zlink-tos.ugurl.cn/obj/zebra-public/resource_lmmizj_1632398893.png");
+            StateHasChanged();
+        }
+    }
+
+    private async Task MeasureHdslbLatencyAsync()
+    {
+        _hdslbDelayList = new int?[6];
+        for (var i = 0; i < 6; i++)
+        {
+            _hdslbDelayList[i] = await MeasureLatencyAsync("https://i0.hdslb.com/bfs/face/member/noface.jpg@24w_24h_1c");
+            StateHasChanged();
+        }
+    }
+
+    private async Task MeasureGithubLatencyAsync()
+    {
+        _githubDelayList = new int?[6];
+        for (var i = 0; i < 6; i++)
+        {
+            _githubDelayList[i] = await MeasureLatencyAsync("https://github.github.io/janky/images/bg_hr.png");
+            StateHasChanged();
+        }
+    }
+
+    private async Task MeasureJsdelivrLatencyAsync()
+    {
+        _jsdelivrDelayList = new int?[6];
+        for (var i = 0; i < 6; i++)
+        {
+            _jsdelivrDelayList[i] = await MeasureLatencyAsync("https://cdn.jsdelivr.net/npm/latency-test@1.0.0/generate_200");
+            StateHasChanged();
+        }
+    }
+
+    private async Task<int?> MeasureLatencyAsync(string url)
+    {
+        try
+        {
+            var request = new HttpRequestMessage(HttpMethod.Head, url);
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            var response = await Http.SendAsync(request);
+            sw.Stop();
+            return response.IsSuccessStatusCode ? (int)sw.ElapsedMilliseconds : null;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private static string GetDelayColor(int? delay)
+    {
+        if (delay is null) return "#9E9E9E";
+
+        var t = Math.Clamp(delay.Value / 500.0, 0.0, 1.0);
+
+        var hue = (int)(120 * (1 - t));
+        return $"hsl({hue}, 80%, 45%)";
+    }
+
 }
