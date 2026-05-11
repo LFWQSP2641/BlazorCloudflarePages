@@ -1,4 +1,4 @@
-﻿@page "/base64decoder"
+@page "/base64decoder"
 @inject ISnackbar SnackbarService
 
 <PageTitle>Base64 Encoder</PageTitle>
@@ -39,6 +39,8 @@
             {
                 base64 += '=';
             }
+            // remove non-base64 characters
+            base64 = new string(base64.Where(c => char.IsLetterOrDigit(c) || c == '+' || c == '/' || c == '=').ToArray());
             var bytes = Convert.FromBase64String(base64);
             _result = System.Text.Encoding.UTF8.GetString(bytes);
         }
